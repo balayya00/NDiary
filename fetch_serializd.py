@@ -28,7 +28,7 @@ def extract_year_range_from_wiki(raw):
         return m.group(0) if m else None
 
     first = re.search(r'first_aired\s*=\s*(.+)', raw, re.IGNORECASE)
-    last  = re.search(r'last_aired\s*=\s*(.+)',  raw, re.IGNORECASE)
+    last  = re.search(r'last_aired\s*=\s*(.+)', raw, re.IGNORECASE)
 
     if first:
         start = get_year(first.group(1))
