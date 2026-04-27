@@ -142,7 +142,6 @@ if __name__ == '__main__':
 
     if not has_cache:
         print('📋 First run — building cache...')
-        print('   (Wikipedia lookups take ~2–3 min on first run)')
         subprocess.run(
             [sys.executable, 'fetch_letterboxd.py'],
             timeout=60,
@@ -158,8 +157,7 @@ if __name__ == '__main__':
         print('✅ Cache found — starting immediately')
         trigger_bg_refresh()
 
-    # ── KEY FIX: bind 0.0.0.0 so Render can reach the app ──
-    port = int(os.environ.get('PORT', 3000))
+    port = int(os.environ.get('PORT', 10000))
     print(f'\n🌐  Running on port {port}\n')
     app.run(
         host='0.0.0.0',
