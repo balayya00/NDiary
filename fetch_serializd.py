@@ -7,6 +7,7 @@ import requests
 import nest_asyncio
 nest_asyncio.apply()
 
+from playwright.async_api import async_playwright
 from datetime import datetime
 
 SZ_USER      = 'tharun123'
@@ -19,7 +20,7 @@ WIKI_HEADERS = {
 _wiki_cache = {}
 
 
-# ── Wikipedia helpers ─────────────────────────────────────────────────────────
+# ── Wikipedia ─────────────────────────────────────────────────────────────────
 
 def extract_year_range_from_wiki(raw):
     def get_year(text):
@@ -121,30 +122,10 @@ def get_wiki_year(show_name):
         return None
 
 
-# ── Check if Playwright browser is available ──────────────────────────────────
-
-def playwright_available():
-    """Return True only if the Chromium executable actually exists."""
-    try:
-        from playwright.sync_api import sync_playwright
-        with sync_playwright() as p:
-            exe = p.chromium.executable_path
-            exists = os.path.exists(exe)
-            if not exists:
-                print(f'  Browser not found at: {exe}')
-            return exists
-    except Exception as e:
-        print(f'  Playwright check failed: {e}')
-        return False
-
-
 # ── Playwright scraper ────────────────────────────────────────────────────────
 
-async def scrape_serializd_playwright():
-    """Scrape Serializd diary via Playwright browser automation."""
-    from playwright.async_api import async_playwright
-
-    url = f'https://www.serializd.com/user/{SZ_USER}/diary'
+async def scrape_serializd():
+    url      = f'https://www.serializd.com/user/{SZ_USER}/diary'
     captured = []
 
     async with async_playwright() as p:
@@ -157,6 +138,7 @@ async def scrape_serializd_playwright():
                 '--disable-extensions',
                 '--disable-setuid-sandbox',
                 '--single-process',
+                '--no-zygote',
             ],
         )
         ctx = await browser.new_context(
@@ -168,7 +150,6 @@ async def scrape_serializd_playwright():
         )
         page = await ctx.new_page()
 
-        # Block heavy assets
         await page.route(
             '**/*.{png,jpg,jpeg,gif,svg,webp,woff,woff2,ttf,eot,mp4,mp3}',
             lambda route: route.abort(),
@@ -218,99 +199,7 @@ async def scrape_serializd_playwright():
     return captured
 
 
-# ── Direct API fallback (no browser needed) ───────────────────────────────────
-
-API_PATTERNS = [
-    lambda u, p: f'https://api.serializd.com/user/{u}/diary?page={p}',
-    lambda u, p: f'https://api.serializd.com/user/{u}/reviews?page={p}',
-    lambda u, p: f'https://api.serializd.com/user/{u}/logs?page={p}',
-    lambda u, p: f'https://api.serializd.com/user/{u}/watches?page={p}',
-    lambda u, p: (
-        f'https://www.serializd.com/api/user/{u}/diary?page={p}'
-    ),
-    lambda u, p: (
-        f'https://www.serializd.com/api/user/{u}/reviews?page={p}'
-    ),
-]
-
-API_HEADERS = {
-    'User-Agent': (
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-        'AppleWebKit/537.36 (KHTML, like Gecko) '
-        'Chrome/124.0.0.0 Safari/537.36'
-    ),
-    'Accept':  'application/json',
-    'Referer': 'https://www.serializd.com/',
-    'Origin':  'https://www.serializd.com',
-}
-
-
-def fetch_one_pattern(url_fn, user, max_pages=20):
-    all_items = []
-    for page in range(1, max_pages + 1):
-        url = url_fn(user, page)
-        try:
-            resp = requests.get(
-                url, headers=API_HEADERS, timeout=15
-            )
-            if resp.status_code in (401, 403, 404):
-                break
-            if not resp.ok:
-                break
-
-            data = resp.json()
-
-            items = (
-                data.get('reviews')
-                or data.get('entries')
-                or data.get('items')
-                or data.get('data')
-                or (data.get('diary') or {}).get('reviews', [])
-                or []
-            )
-            if isinstance(items, dict):
-                items = (
-                    items.get('items')
-                    or items.get('results')
-                    or []
-                )
-            if not isinstance(items, list) or not items:
-                break
-
-            all_items.extend(items)
-            print(f'    API page {page}: +{len(items)} items')
-
-            total_pages = int(
-                data.get('totalPages')
-                or data.get('total_pages')
-                or data.get('pages')
-                or 1
-            )
-            if page >= total_pages:
-                break
-
-        except Exception as e:
-            print(f'    API error page {page}: {e}')
-            break
-
-    return all_items
-
-
-def scrape_serializd_api():
-    """Try Serializd public API endpoints directly."""
-    print('  Trying direct API endpoints...')
-    for i, url_fn in enumerate(API_PATTERNS):
-        print(f'  Pattern {i+1}...')
-        items = fetch_one_pattern(url_fn, SZ_USER)
-        if items:
-            print(f'  ✅ Pattern {i+1} got {len(items)} items')
-            return [{'reviews': items}]
-        print(f'  ❌ Pattern {i+1} got nothing')
-
-    return []
-
-
-# ── Parse raw captured data ───────────────────────────────────────────────────
+# ── Parse ─────────────────────────────────────────────────────────────────────
 
 def parse_serializd(raw_data):
     clean = []
@@ -390,7 +279,6 @@ def enrich_years(entries):
         dict.fromkeys(e['title'] for e in entries if e['title'])
     )
     print(f'   Looking up {len(unique_titles)} shows on Wikipedia…')
-
     year_map = {}
     for i, title in enumerate(unique_titles):
         year = get_wiki_year(title)
@@ -399,14 +287,10 @@ def enrich_years(entries):
             f'   [{i+1}/{len(unique_titles)}] '
             f'{title} → {year or "not found"}'
         )
-
     for e in entries:
         e['year'] = year_map.get(e['title'], '')
-
     return entries
 
-
-# ── Cache ─────────────────────────────────────────────────────────────────────
 
 def load_cache():
     if os.path.exists(CACHE_FILE):
@@ -423,47 +307,27 @@ def save_cache(entries):
         json.dump(entries, f, ensure_ascii=False, indent=2)
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
-
 def fetch_serializd():
     print('🎭 Scraping Serializd...')
-    raw = []
+    try:
+        raw = asyncio.run(scrape_serializd())
+        print(f'   Got {len(raw)} API response batches')
 
-    # ── Try Playwright first (if browser is installed) ────────────────────
-    if playwright_available():
-        print('  ✅ Playwright browser found — using browser scrape')
-        try:
-            raw = asyncio.run(scrape_serializd_playwright())
-            print(f'  Got {len(raw)} captured responses')
-        except Exception as e:
-            print(f'  Playwright scrape error: {e}')
-            raw = []
-    else:
-        print('  ⚠️  Playwright browser NOT installed')
+        entries = parse_serializd(raw)
+        print(f'   Parsed {len(entries)} unique entries')
 
-    # ── Fallback: direct API ──────────────────────────────────────────────
-    if not raw:
-        print('  Falling back to direct API...')
-        raw = scrape_serializd_api()
+        if not entries:
+            print('⚠️  No entries — using cache')
+            return load_cache()
 
-    # ── Parse ─────────────────────────────────────────────────────────────
-    if not raw:
-        print('⚠️  No data from any source — using cache')
+        entries = enrich_years(entries)
+        save_cache(entries)
+        print(f'✅ Serializd: {len(entries)} entries saved')
+        return entries
+
+    except Exception as e:
+        print(f'❌ Serializd failed: {e}')
         return load_cache()
-
-    entries = parse_serializd(raw)
-    print(f'   Parsed {len(entries)} unique entries')
-
-    if not entries:
-        print('⚠️  Parse gave 0 entries — using cache')
-        return load_cache()
-
-    print('   Fetching years from Wikipedia…')
-    entries = enrich_years(entries)
-
-    save_cache(entries)
-    print(f'✅ Serializd: {len(entries)} entries saved')
-    return entries
 
 
 if __name__ == '__main__':
