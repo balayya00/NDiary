@@ -106,9 +106,7 @@ def diary():
     entries = combined_diary()
     lb_c    = len(read_json(LB_CACHE))
     sz_c    = len(read_json(SZ_CACHE))
-
     trigger_bg_refresh()
-
     return jsonify({
         'entries':    entries,
         'count':      len(entries),
