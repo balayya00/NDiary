@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tharun's Diary</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,500;1,700&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:        #0d0d0d;
+  --bg2:       #111;
+  --bg3:       #161616;
+  --bg4:       #1c1c1c;
+  --border:    rgba(255,255,255,0.06);
+  --border2:   rgba(255,255,255,0.12);
+  --text-1:    #ebebeb;
+  --text-2:    #909090;
+  --text-3:    #505050;
+  --accent:    #c8a96e;
+  --star:      #f5c518;
+  --green:     #4ade80;
+  --blue:      #60a5fa;
+  --red:       #f87171;
+  --hover:     rgba(255,255,255,0.03);
+  --hdr:       62px;
+
+  /* responsive font scale */
+  --fs-base:   16px;
+  --fs-sm:     14px;
+  --fs-xs:     12px;
+  --fs-xxs:    10px;
+  --fs-title:  15px;
+  --fs-date:   14px;
+  --fs-year:   14px;
+  --fs-rating: 14px;
+  --fs-type:   10px;
+  --fs-badge:  13px;
+  --fs-count:  13px;
+  --fs-mono:   13px;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--bg);
+  color:var(--text-1);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:var(--fs-base);
+  line-height:1.6;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ═══════════════════════════════════
+   INTRO ANIMATION
+═══════════════════════════════════ */
+#intro{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.intro-text{
+  font-family:'Playfair Display',Georgia,serif;
+  font-style:italic;
+  font-weight:700;
+  font-size:clamp(52px, 10vw, 96px);
+  color:var(--text-1);
+  letter-spacing:-2px;
+  line-height:1;
+  opacity:0;
+  transform:scale(0.92) translateY(14px);
+  animation:iShow 0.8s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+  white-space:nowrap;
+}
+
+.intro-text em{
+  color:var(--accent);
+  font-style:italic;
+}
+
+@keyframes iShow{
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+
+#intro.fade-out{
+  animation:iFade 0.55s ease forwards;
+}
+
+@keyframes iFade{
+  to{opacity:0}
+}
+
+/* ═══════════════════════════════════
+   HEADER
+═══════════════════════════════════ */
+header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  height:var(--hdr);
+  background:rgba(13,13,13,0.96);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  /* three-column: left gap | center logo | right controls */
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  padding:0 clamp(16px,4vw,48px);
+  opacity:0;
+  transition:opacity 0.5s ease;
+}
+
+header.vis{opacity:1}
+
+/* invisible left spacer */
+.hdr-left{display:flex;justify-content:flex-start}
+
+/* centered logo */
+.logo{
+  font-family:'Playfair Display',Georgia,serif;
+  font-style:italic;
+  font-weight:700;
+  font-size:clamp(20px,2.6vw,28px);
+  color:var(--text-1);
+  letter-spacing:-0.5px;
+  user-select:none;
+  line-height:1;
+  white-space:nowrap;
+  text-align:center;
+}
+
+.logo em{color:var(--accent)}
+
+/* right side badges */
+.hdr-right{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:clamp(8px,1.5vw,16px);
+}
+
+.entry-count{
+  font-size:var(--fs-count);
+  font-weight:500;
+  color:var(--text-2);
+  white-space:nowrap;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  font-size:var(--fs-badge);
+  font-weight:600;
+  padding:5px 15px 5px 11px;
+  border-radius:24px;
+  border:1px solid;
+  text-decoration:none;
+  white-space:nowrap;
+  transition:filter 0.2s, transform 0.18s;
+  line-height:1;
+}
+
+.badge:hover{filter:brightness(1.3);transform:translateY(-1px)}
+
+.badge-lb{
+  color:var(--green);
+  border-color:rgba(74,222,128,0.28);
+  background:rgba(74,222,128,0.07);
+}
+.badge-sz{
+  color:var(--blue);
+  border-color:rgba(96,165,250,0.28);
+  background:rgba(96,165,250,0.07);
+}
+.badge-err{
+  color:var(--red);
+  border-color:rgba(248,113,113,0.28);
+  background:rgba(248,113,113,0.07);
+}
+
+.bdot{
+  width:7px;height:7px;
+  border-radius:50%;
+  background:currentColor;
+  flex-shrink:0;
+  animation:pulse 2.2s ease infinite;
+}
+
+.bdot.dead{animation:none;opacity:0.3}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}
+
+/* ═══════════════════════════════════
+   MAIN
+═══════════════════════════════════ */
+main{
+  max-width:1100px;
+  margin:0 auto;
+  padding:0 clamp(16px,4vw,48px) 80px;
+  opacity:0;
+  transition:opacity 0.5s ease 0.1s;
+}
+
+main.vis{opacity:1}
+
+/* ── column header ── */
+.col-head{
+  display:grid;
+  grid-template-columns:var(--cols);
+  padding:22px 16px 10px;
+  border-bottom:1px solid var(--border2);
+  margin-top:26px;
+  gap:12px;
+}
+
+.ch{
+  font-size:var(--fs-xxs);
+  font-weight:700;
+  letter-spacing:1.6px;
+  text-transform:uppercase;
+  color:var(--text-3);
+}
+.ch.r{text-align:right}
+
+/* ── month group ── */
+.month-sep{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:24px 16px 8px;
+}
+
+.ms-label{
+  font-size:20px;
+  font-weight:700;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--accent);
+  white-space:nowrap;
+}
+
+.ms-line{flex:1;height:1px;background:var(--border)}
+.ms-count{font-size:15px;color:var(--text-3);white-space:nowrap}
+
+/* ── diary row ── */
+.row{
+  display:grid;
+  grid-template-columns:var(--cols);
+  align-items:center;
+  min-height:62px;
+  padding:10px 16px;
+  border-bottom:1px solid var(--border);
+  transition:background 0.14s;
+  animation:rowIn 0.32s ease both;
+  gap:12px;
+}
+
+.row:hover{background:var(--hover)}
+
+@keyframes rowIn{
+  from{opacity:0;transform:translateY(5px)}
+  to  {opacity:1;transform:translateY(0)}
+}
+
+/* date */
+.r-date{
+  font-size:var(--fs-date);
+  color:var(--text-2);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:0.2px;
+  white-space:nowrap;
+}
+
+/* type badge */
+.r-type-cell{display:flex;align-items:center}
+
+.r-type{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:var(--fs-type);
+  font-weight:700;
+  letter-spacing:0.8px;
+  text-transform:uppercase;
+  padding:2px 8px;
+  border-radius:4px;
+  white-space:nowrap;
+}
+
+.t-film{
+  color:var(--green);
+  background:rgba(74,222,128,0.1);
+}
+.t-tv{
+  color:var(--blue);
+  background:rgba(96,165,250,0.1);
+}
+
+/* title */
+.r-title-wrap{min-width:0}
+
+.r-title{
+  font-size:var(--fs-title);
+  font-weight:500;
+  color:var(--text-1);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  letter-spacing:-0.1px;
+  line-height:1.3;
+}
+
+/* release year */
+.r-year{
+  font-size:var(--fs-year);
+  color:var(--text-3);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+
+/* rating */
+.r-rating{
+  text-align:right;
+  white-space:nowrap;
+}
+
+.stars{
+  font-size:var(--fs-rating);
+  color:var(--star);
+  letter-spacing:1.5px;
+}
+
+.no-rating{
+  font-size:var(--fs-xs);
+  color:var(--text-3);
+}
+
+/* ═══════════════════════════════════
+   STATES
+═══════════════════════════════════ */
+.loading{padding:110px 0;text-align:center}
+
+.spin-lg{
+  width:28px;height:28px;
+  border:2px solid var(--border2);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin 0.75s linear infinite;
+  margin:0 auto 16px;
+}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.load-txt{font-size:15px;color:var(--text-2)}
+.load-sub{font-size:12px;color:var(--text-3);margin-top:5px}
+
+.msg-box{
+  margin:90px auto;
+  max-width:380px;
+  background:var(--bg3);
+  border:1px solid var(--border2);
+  border-radius:12px;
+  padding:48px 32px;
+  text-align:center;
+}
+
+.msg-ico  {font-size:28px;margin-bottom:14px}
+.msg-title{font-size:17px;font-weight:600;margin-bottom:8px}
+.msg-body {font-size:13px;color:var(--text-2);line-height:1.9}
+.msg-body code{
+  background:var(--bg4);
+  padding:2px 6px;border-radius:3px;
+  font-size:12px;
+}
+
+/* ═══════════════════════════════════
+   TOAST
+═══════════════════════════════════ */
+.toast{
+  position:fixed;
+  bottom:22px;right:22px;
+  background:#1a1a1a;
+  border:1px solid var(--border2);
+  border-radius:8px;
+  padding:10px 16px;
+  font-size:13px;
+  color:var(--text-2);
+  display:flex;align-items:center;gap:9px;
+  opacity:0;transform:translateY(6px);
+  transition:opacity 0.3s,transform 0.3s;
+  pointer-events:none;z-index:500;
+  max-width:260px;
+}
+
+.toast.show{opacity:1;transform:translateY(0)}
+
+.t-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--accent);flex-shrink:0;
+  animation:pulse 1.5s ease infinite;
+}
+
+/* ═══════════════════════════════════
+   RESPONSIVE
+   cols = DATE | TYPE | TITLE | RELEASE YEAR | RATING
+═══════════════════════════════════ */
+
+/* Desktop ≥ 900px */
+:root{
+  --cols: 120px 56px 1fr 120px 130px;
+}
+
+/* Tablet 600–899px */
+@media(max-width:899px){
+  :root{
+    --cols: 110px 50px 1fr 100px;
+    --fs-title:  15px;
+    --fs-date:   13px;
+    --fs-year:   13px;
+    --fs-badge:  12px;
+    --fs-count:  12px;
+  }
+
+  /* hide rating col header & cells */
+  .ch-rating,.r-rating{display:none}
+
+  .badge span:not(.bdot){display:none}
+  .badge{padding:6px 10px}
+}
+
+/* Phone ≤ 599px */
+@media(max-width:599px){
+  :root{
+    --cols: 96px 42px 1fr;
+    --fs-title:  14px;
+    --fs-date:   12px;
+    --fs-year:   12px;
+    --fs-type:   9px;
+    --fs-badge:  12px;
+    --fs-count:  12px;
+    --fs-base:   14px;
+  }
+
+  header{padding:0 14px}
+  main  {padding:0 14px 60px}
+
+  .logo{font-size:19px}
+
+  .col-head,.row{padding-left:12px;padding-right:12px}
+  .row{min-height:54px}
+
+  /* hide year and rating on phone */
+  .ch-year,.ch-rating,.r-year,.r-rating{display:none}
+
+  .toast{
+    bottom:12px;right:12px;left:12px;
+    max-width:none;
+  }
+}
+
+/* Large ≥ 1200px */
+@media(min-width:1200px){
+  :root{
+    --cols: 130px 60px 1fr 130px 140px;
+    --fs-title:  16px;
+    --fs-date:   15px;
+    --fs-year:   15px;
+    --fs-rating: 15px;
+    --fs-badge:  14px;
+    --fs-count:  14px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="intro-text">Tharun's&nbsp;<em>Diary</em></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="t-dot"></span>
+  <span id="toastMsg">Refreshing…</span>
+</div>
+
+<!-- HEADER: left-spacer | center-logo | right-controls -->
+<header id="hdr">
+  <div class="hdr-left"></div>
+
+  <div class="logo">Tharun's&nbsp;<em>Diary</em></div>
+
+  <div class="hdr-right">
+    <span class="entry-count" id="countEl">—</span>
+    <a class="badge badge-lb" id="badgeLB"
+       href="https://letterboxd.com/a__tharun/diary/"
+       target="_blank" rel="noopener">
+      <span class="bdot" id="dotLB"></span>
+      <span>Letterboxd</span>
+    </a>
+    <a class="badge badge-sz" id="badgeSZ"
+       href="https://www.serializd.com/user/tharun123/diary"
+       target="_blank" rel="noopener">
+      <span class="bdot" id="dotSZ"></span>
+      <span>Serializd</span>
+    </a>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main id="main">
+  <div class="col-head">
+    <span class="ch">Date</span>
+    <span class="ch">Type</span>
+    <span class="ch">Title</span>
+    <span class="ch ch-year">Release Year</span>
+    <span class="ch ch-rating r">Rating</span>
+  </div>
+  <div id="diary">
+    <div class="loading">
+      <div class="spin-lg"></div>
+      <div class="load-txt">Loading diary…</div>
+      <div class="load-sub">Fetching entries</div>
+    </div>
+  </div>
+</main>
+
+<script>
+'use strict';
+
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2,'0');
+
+/* ── date helpers ──────────────────────────────── */
+function fmtDate(s){
+  if(!s) return '—';
+  const parts = s.split('-').map(Number);
+  if(parts.length < 3 || parts.some(isNaN)) return s;
+  const [y,m,d] = parts;
+  return `${pad(d)}/${pad(m)}/${y}`;
+}
+
+function monthKey(s){
+  if(!s) return 'Undated';
+  const [y,m] = s.split('-').map(Number);
+  if(!y||!m) return 'Undated';
+  const names = ['January','February','March','April','May','June',
+                 'July','August','September','October','November','December'];
+  return `${names[m-1]} ${y}`;
+}
+
+/* ── stars ─────────────────────────────────────── */
+function toStars(r){
+  if(r==null||r==='') return '';
+  const v = parseFloat(r);
+  if(isNaN(v)||v<=0) return '';
+  return '★'.repeat(Math.floor(v)) + ((v%1)>=0.4?'½':'');
+}
+
+/* ── escaping ───────────────────────────────────── */
+function esc(s){
+  return String(s??'')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── toast ──────────────────────────────────────── */
+let _tt=null;
+function showToast(msg,ms=0){
+  $('toastMsg').textContent=msg;
+  $('toast').classList.add('show');
+  if(_tt){clearTimeout(_tt);_tt=null;}
+  if(ms>0) _tt=setTimeout(()=>$('toast').classList.remove('show'),ms);
+}
+
+/* ── intro ──────────────────────────────────────── */
+function runIntro(){
+  return new Promise(resolve=>{
+    const el=$('intro');
+    setTimeout(()=>{
+      el.classList.add('fade-out');
+      setTimeout(()=>{
+        el.style.display='none';
+        $('hdr').classList.add('vis');
+        $('main').classList.add('vis');
+        resolve();
+      },560);
+    },1750);
+  });
+}
+
+/* ── badges ─────────────────────────────────────── */
+function badgeOK(id){
+  const b=$('badge'+id);
+  if(!b)return;
+  b.classList.remove('badge-err');
+  b.classList.add(id==='LB'?'badge-lb':'badge-sz');
+  $('dot'+id)?.classList.remove('dead');
+}
+function badgeErr(id){
+  const b=$('badge'+id);
+  if(!b)return;
+  b.classList.remove('badge-lb','badge-sz');
+  b.classList.add('badge-err');
+  $('dot'+id)?.classList.add('dead');
+}
+
+/* ── render ─────────────────────────────────────── */
+function renderEntries(entries){
+  const container=$('diary');
+
+  if(!entries.length){
+    container.innerHTML=`
+      <div class="msg-box">
+        <div class="msg-ico">📭</div>
+        <div class="msg-title">No entries found</div>
+        <div class="msg-body">Check your Letterboxd &amp; Serializd profiles.</div>
+      </div>`;
+    return;
+  }
+
+  /* group by month */
+  const groups=new Map();
+  const ordKeys=[];
+  for(const e of entries){
+    const mk=monthKey(e.watched_date);
+    if(!groups.has(mk)){groups.set(mk,[]);ordKeys.push(mk);}
+    groups.get(mk).push(e);
+  }
+
+  let html='';
+  let idx=0;
+
+  for(const mk of ordKeys){
+    const grp=groups.get(mk);
+    html+=`
+      <div class="month-sep">
+        <span class="ms-label">${mk}</span>
+        <span class="ms-line"></span>
+        <span class="ms-count">${grp.length}</span>
+      </div>`;
+
+    for(const e of grp){
+      const delay=Math.min(idx*14,320);
+      const stars=toStars(e.rating);
+      const isTV =(e.type==='tv');
+
+      html+=`
+        <div class="row" data-idx="${idx}"
+             style="animation-delay:${delay}ms">
+
+          <div class="r-date">${fmtDate(e.watched_date)}</div>
+
+          <div class="r-type-cell">
+            <span class="r-type ${isTV?'t-tv':'t-film'}">
+              ${isTV?'TV':'Film'}
+            </span>
+          </div>
+
+          <div class="r-title-wrap">
+            <div class="r-title" title="${esc(e.title)}">${esc(e.title)}</div>
+          </div>
+
+          <div class="r-year ch-year">${esc(e.year||'—')}</div>
+
+          <div class="r-rating ch-rating">
+            ${stars
+              ?`<span class="stars" title="${e.rating}/5">${stars}</span>`
+              :`<span class="no-rating">—</span>`}
+          </div>
+
+        </div>`;
+
+      idx++;
+    }
+  }
+
+  container.innerHTML=html;
+}
+
+/* ── poll for bg refresh ────────────────────────── */
+let _poll=null;
+let _lastCount=0;
+
+function startPoll(){
+  if(_poll)return;
+  _poll=setInterval(async()=>{
+    try{
+      const r=await fetch('/api/status');
+      const sd=await r.json();
+      if(!sd.refreshing){
+        clearInterval(_poll);_poll=null;
+        const newTotal=(sd.lb_count||0)+(sd.sz_count||0);
+        if(newTotal!==_lastCount){
+          showToast('New entries — reloading…');
+          setTimeout(()=>location.reload(),1000);
+        } else {
+          showToast('Up to date ✓',2500);
+        }
+      }
+    }catch{
+      clearInterval(_poll);_poll=null;
+    }
+  },3000);
+}
+
+/* ── init ───────────────────────────────────────── */
+async function init(){
+  const [,apiRes]=await Promise.allSettled([
+    runIntro(),
+    fetch('/api/diary').then(r=>r.json()),
+  ]);
+
+  if(apiRes.status==='rejected'){
+    badgeErr('LB');badgeErr('SZ');
+    $('diary').innerHTML=`
+      <div class="msg-box">
+        <div class="msg-ico">⚠️</div>
+        <div class="msg-title">Server not running</div>
+        <div class="msg-body">
+          Run: <code>python server.py</code><br><br>
+          Then open <strong>http://localhost:3000</strong>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const data=apiRes.value;
+  const entries=data.entries||[];
+  _lastCount=data.count||0;
+
+  (data.lb_count>0)?badgeOK('LB'):badgeErr('LB');
+  (data.sz_count>0)?badgeOK('SZ'):badgeErr('SZ');
+
+  const lb=data.lb_count||0;
+  const sz=data.sz_count||0;
+  $('countEl').textContent=`${lb+sz} entries`;
+
+  renderEntries(entries);
+
+  if(data.refreshing){
+    showToast('Updating in background…');
+    startPoll();
+  }
+}
+
+init();
+</script>
+</body>
+</html>

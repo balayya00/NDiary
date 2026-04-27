@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: diary
+    runtime: python
+    pythonVersion: "3.11.0"
+    buildCommand: bash build.sh
+    startCommand: python server.py
+    envVars:
+      - key: PORT
+        value: 10000
