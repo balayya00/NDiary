@@ -10,3 +10,11 @@ services:
         value: 10000
       - key: PLAYWRIGHT_BROWSERS_PATH
         value: /opt/render/.cache/ms-playwright
+services:
+  - type: web
+    name: diary
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 10000
