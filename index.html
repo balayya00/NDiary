@@ -10,23 +10,22 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
-  --bg:        #0d0d0d;
-  --bg2:       #111;
-  --bg3:       #161616;
-  --bg4:       #1c1c1c;
-  --border:    rgba(255,255,255,0.06);
-  --border2:   rgba(255,255,255,0.12);
-  --text-1:    #ebebeb;
-  --text-2:    #909090;
-  --text-3:    #505050;
-  --accent:    #c8a96e;
-  --star:      #f5c518;
-  --green:     #4ade80;
-  --blue:      #60a5fa;
-  --red:       #f87171;
-  --hover:     rgba(255,255,255,0.03);
-  --hdr:       62px;
-  --rewatch:   #a78bfa;
+  --bg:      #0d0d0d;
+  --bg2:     #111;
+  --bg3:     #161616;
+  --bg4:     #1c1c1c;
+  --border:  rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.12);
+  --text-1:  #ebebeb;
+  --text-2:  #909090;
+  --text-3:  #505050;
+  --accent:  #c8a96e;
+  --star:    #f5c518;
+  --green:   #4ade80;
+  --blue:    #60a5fa;
+  --red:     #f87171;
+  --hover:   rgba(255,255,255,0.03);
+  --hdr:     62px;
 }
 
 html{scroll-behavior:smooth}
@@ -75,34 +74,43 @@ header{
   backdrop-filter:blur(20px);
   -webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid var(--border);
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
+  display:flex;
   align-items:center;
-  padding:0 clamp(16px,4vw,48px);
+  justify-content:space-between;
+  padding:0 clamp(12px,4vw,48px);
+  gap:12px;
   opacity:0;transition:opacity 0.5s ease;
 }
 header.vis{opacity:1}
-.hdr-left{display:flex;justify-content:flex-start}
+
 .logo{
   font-family:'Playfair Display',Georgia,serif;
   font-style:italic;font-weight:700;
-  font-size:clamp(20px,2.6vw,28px);
+  font-size:clamp(18px,2.6vw,28px);
   color:var(--text-1);letter-spacing:-0.5px;
-  user-select:none;line-height:1;white-space:nowrap;text-align:center;
+  user-select:none;line-height:1;white-space:nowrap;
+  flex-shrink:0;
 }
 .logo em{color:var(--accent)}
+
 .hdr-right{
-  display:flex;align-items:center;justify-content:flex-end;
-  gap:clamp(8px,1.5vw,16px);
+  display:flex;align-items:center;
+  gap:8px;
+  flex-shrink:0;
 }
+
 .entry-count{
-  font-size:13px;font-weight:500;
+  font-size:12px;font-weight:500;
   color:var(--text-2);white-space:nowrap;
+  margin-right:4px;
 }
+
+/* ── badges ── */
 .badge{
-  display:inline-flex;align-items:center;gap:7px;
-  font-size:13px;font-weight:600;
-  padding:5px 15px 5px 11px;border-radius:24px;border:1px solid;
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;font-weight:600;
+  padding:5px 12px 5px 9px;
+  border-radius:24px;border:1px solid;
   text-decoration:none;white-space:nowrap;
   transition:filter 0.2s,transform 0.18s;line-height:1;
 }
@@ -110,12 +118,17 @@ header.vis{opacity:1}
 .badge-lb{color:var(--green);border-color:rgba(74,222,128,0.28);background:rgba(74,222,128,0.07)}
 .badge-sz{color:var(--blue);border-color:rgba(96,165,250,0.28);background:rgba(96,165,250,0.07)}
 .badge-err{color:var(--red);border-color:rgba(248,113,113,0.28);background:rgba(248,113,113,0.07)}
+
 .bdot{
   width:7px;height:7px;border-radius:50%;
   background:currentColor;flex-shrink:0;
   animation:pulse 2.2s ease infinite;
 }
 .bdot.dead{animation:none;opacity:0.3}
+
+/* badge label — hidden on small phones */
+.badge-label{font-size:12px}
+
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}
 
 /* ═══════════════════════════════════
@@ -123,29 +136,43 @@ header.vis{opacity:1}
 ═══════════════════════════════════ */
 main{
   max-width:1100px;margin:0 auto;
-  padding:0 clamp(16px,4vw,48px) 80px;
+  padding:0 clamp(12px,4vw,48px) 80px;
   opacity:0;transition:opacity 0.5s ease 0.1s;
 }
 main.vis{opacity:1}
 
 /* ═══════════════════════════════════
-   TABLE WRAPPER
-   — desktop: normal
-   — mobile:  horizontally scrollable
+   TABLE — horizontal scroll on mobile
 ═══════════════════════════════════ */
 .table-wrap{
   width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color:var(--border2) transparent;
+}
+.table-wrap::-webkit-scrollbar{height:3px}
+.table-wrap::-webkit-scrollbar-track{background:transparent}
+.table-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* ── col grid
+   DATE | TYPE | TITLE+REWATCH | YEAR | RATING
+   Title cell holds both title text and rewatch icon inline
+── */
+.col-head,
+.row{
+  display:grid;
+  grid-template-columns:110px 52px 1fr 110px 120px;
+  align-items:center;
+  gap:12px;
+  min-width:580px;
 }
 
 /* ── column header ── */
 .col-head{
-  display:grid;
-  grid-template-columns:120px 56px 1fr 24px 120px 130px;
   padding:22px 16px 10px;
   border-bottom:1px solid var(--border2);
   margin-top:26px;
-  gap:12px;
-  min-width:700px;
 }
 .ch{
   font-size:10px;font-weight:700;
@@ -153,7 +180,7 @@ main.vis{opacity:1}
 }
 .ch.r{text-align:right}
 
-/* ── month group ── */
+/* ── month separator ── */
 .month-sep{
   display:flex;align-items:center;gap:12px;
   padding:24px 16px 8px;
@@ -167,15 +194,11 @@ main.vis{opacity:1}
 
 /* ── diary row ── */
 .row{
-  display:grid;
-  grid-template-columns:120px 56px 1fr 24px 120px 130px;
-  align-items:center;min-height:62px;
+  min-height:62px;
   padding:10px 16px;
   border-bottom:1px solid var(--border);
   transition:background 0.14s;
   animation:rowIn 0.32s ease both;
-  gap:12px;
-  min-width:700px;
 }
 .row:hover{background:var(--hover)}
 @keyframes rowIn{
@@ -185,12 +208,12 @@ main.vis{opacity:1}
 
 /* date */
 .r-date{
-  font-size:14px;color:var(--text-2);
+  font-size:13px;color:var(--text-2);
   font-variant-numeric:tabular-nums;
   letter-spacing:0.2px;white-space:nowrap;
 }
 
-/* type badge */
+/* type */
 .r-type-cell{display:flex;align-items:center}
 .r-type{
   display:inline-flex;align-items:center;justify-content:center;
@@ -200,32 +223,76 @@ main.vis{opacity:1}
 .t-film{color:var(--green);background:rgba(74,222,128,0.1)}
 .t-tv  {color:var(--blue); background:rgba(96,165,250,0.1)}
 
-/* title */
-.r-title-wrap{min-width:0}
+/* ── title cell: flex row with rewatch icon inline ── */
+.r-title-wrap{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:7px;          /* small gap between title and icon */
+}
+
 .r-title{
   font-size:15px;font-weight:500;color:var(--text-1);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   letter-spacing:-0.1px;line-height:1.3;
+  min-width:0;flex:1;
 }
 
-/* ── REWATCH icon cell ── */
-.r-rewatch-cell{
-  display:flex;align-items:center;justify-content:center;
-  width:24px;flex-shrink:0;
-}
+/* ── REWATCH ICON ── */
 .rewatch-icon{
-  font-size:13px;
+  flex-shrink:0;
+  font-size:17px;          /* bigger icon */
   line-height:1;
+  color:#a78bfa;
   cursor:default;
-  /* gentle spin on hover */
-  transition:transform 0.4s ease;
-  display:inline-block;
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  transition:transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+  user-select:none;
+  /* keep it from shrinking title too much */
+  width:22px;
+  text-align:center;
+  justify-content:center;
 }
-.rewatch-icon:hover{transform:rotate(360deg)}
 
-/* release year */
+.rewatch-icon:hover,
+.rewatch-icon.tapped{
+  transform:rotate(360deg);
+}
+
+/* tooltip */
+.rewatch-icon::after{
+  content:'Rewatched';
+  position:absolute;
+  bottom:calc(100% + 6px);
+  left:50%;
+  transform:translateX(-50%);
+  background:#1e1e2e;
+  color:#a78bfa;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:0.4px;
+  padding:4px 9px;
+  border-radius:6px;
+  border:1px solid rgba(167,139,250,0.3);
+  white-space:nowrap;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 0.18s ease, transform 0.18s ease;
+  transform:translateX(-50%) translateY(4px);
+  z-index:10;
+}
+
+.rewatch-icon:hover::after,
+.rewatch-icon.tapped::after{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+/* year */
 .r-year{
-  font-size:14px;color:var(--text-3);
+  font-size:13px;color:var(--text-3);
   font-variant-numeric:tabular-nums;white-space:nowrap;
 }
 
@@ -256,7 +323,10 @@ main.vis{opacity:1}
 .msg-ico  {font-size:28px;margin-bottom:14px}
 .msg-title{font-size:17px;font-weight:600;margin-bottom:8px}
 .msg-body {font-size:13px;color:var(--text-2);line-height:1.9}
-.msg-body code{background:var(--bg4);padding:2px 6px;border-radius:3px;font-size:12px}
+.msg-body code{
+  background:var(--bg4);padding:2px 6px;
+  border-radius:3px;font-size:12px;
+}
 
 /* ═══════════════════════════════════
    TOAST
@@ -278,115 +348,72 @@ main.vis{opacity:1}
 }
 
 /* ═══════════════════════════════════
-   MOBILE SCROLL HINT
-═══════════════════════════════════ */
-.scroll-hint{
-  display:none;
-  align-items:center;
-  gap:8px;
-  padding:10px 16px;
-  font-size:11px;
-  color:var(--text-3);
-  border-bottom:1px solid var(--border);
-  margin-top:26px;
-  overflow:hidden;
-}
-.scroll-hint-arrow{
-  display:flex;align-items:center;gap:3px;
-  animation:hintSlide 1.8s ease infinite;
-  flex-shrink:0;
-}
-@keyframes hintSlide{
-  0%  {transform:translateX(0);   opacity:1}
-  60% {transform:translateX(8px); opacity:0.4}
-  100%{transform:translateX(0);   opacity:1}
-}
-
-/* ═══════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════ */
 
-/* Desktop ≥ 768px — normal layout, no scroll */
-@media(min-width:768px){
-  .table-wrap{overflow:visible}
-  .scroll-hint{display:none!important}
-
-  .badge span:not(.bdot){display:inline}
-
-  /* Large ≥ 1200px */
-  @media(min-width:1200px){
-    .col-head,.row{
-      grid-template-columns:130px 60px 1fr 24px 130px 140px;
-      font-size:16px;
-    }
-    .r-title{font-size:16px}
-    .r-date,.r-year{font-size:15px}
-    .stars{font-size:15px}
-    .badge{font-size:14px}
-    .entry-count{font-size:14px}
-  }
-}
-
-/* Mobile < 768px — horizontal scroll table */
-@media(max-width:767px){
-
-  header{padding:0 14px}
-  main  {padding:0 0 60px}
-
-  .logo{font-size:19px}
-
-  /* hide text in badges, keep dot */
-  .badge span:not(.bdot){display:none}
-  .badge{padding:6px 10px}
-  .entry-count{font-size:12px}
-
-  /* show scroll hint */
-  .scroll-hint{
-    display:flex;
-    margin:26px 14px 0;
-    border-radius:8px 8px 0 0;
+/* ── Phone ≤ 540px ── */
+@media(max-width:540px){
+  header{
+    padding:0 12px;
+    height:54px;
+    gap:8px;
   }
 
-  /* scrollable container */
-  .table-wrap{
-    overflow-x:auto;
-    -webkit-overflow-scrolling:touch;
-    /* custom thin scrollbar */
-    scrollbar-width:thin;
-    scrollbar-color:var(--border2) transparent;
-    padding-bottom:6px;
-    /* fade edges to hint scroll */
-    -webkit-mask-image:linear-gradient(
-      to right,
-      transparent 0px,
-      black 12px,
-      black calc(100% - 12px),
-      transparent 100%
-    );
-    mask-image:linear-gradient(
-      to right,
-      transparent 0px,
-      black 12px,
-      black calc(100% - 12px),
-      transparent 100%
-    );
+  .logo{font-size:17px}
+
+  /* show short badge labels on phone */
+  .entry-count{display:none}
+
+  /* make badges compact but readable */
+  .badge{
+    padding:5px 10px 5px 8px;
+    font-size:11px;
+    gap:5px;
   }
+  .bdot{width:6px;height:6px}
 
-  .table-wrap::-webkit-scrollbar{height:3px}
-  .table-wrap::-webkit-scrollbar-track{background:transparent}
-  .table-wrap::-webkit-scrollbar-thumb{
-    background:var(--border2);border-radius:2px;
-  }
-
-  /* col-head loses top margin (scroll-hint takes that space) */
-  .col-head{margin-top:0;border-radius:0}
-
-  .month-sep{padding-left:14px;padding-right:14px}
+  main{padding:0 0 60px}
+  .month-sep{padding-left:12px;padding-right:12px}
 
   .toast{
-    bottom:12px;right:12px;left:12px;
-    max-width:none;
+    bottom:12px;right:12px;left:12px;max-width:none;
   }
+
+  /* slightly smaller row text on phone */
+  .r-title{font-size:14px}
+  .r-date {font-size:12px}
+  .r-year {font-size:12px}
+  .stars  {font-size:13px}
+}
+
+/* ── Tablet 541–899px ── */
+@media(min-width:541px) and (max-width:899px){
+  .entry-count{font-size:12px}
+  .badge{font-size:12px}
+}
+
+/* ── Desktop ≥ 900px ── */
+@media(min-width:900px){
+  .table-wrap{overflow:visible}
+
+  .col-head,.row{
+    grid-template-columns:120px 56px 1fr 120px 130px;
+  }
+
+  .r-title{font-size:15px}
+  .r-date,.r-year{font-size:14px}
+}
+
+/* ── Large ≥ 1200px ── */
+@media(min-width:1200px){
+  .col-head,.row{
+    grid-template-columns:130px 60px 1fr 130px 140px;
+  }
+  .r-title{font-size:16px}
+  .r-date,.r-year{font-size:15px}
+  .stars{font-size:15px}
+  .badge{font-size:14px;padding:5px 15px 5px 11px}
+  .entry-count{font-size:14px}
 }
 </style>
 </head>
@@ -405,43 +432,34 @@ main.vis{opacity:1}
 
 <!-- HEADER -->
 <header id="hdr">
-  <div class="hdr-left"></div>
   <div class="logo">Tharun's&nbsp;<em>Diary</em></div>
+
   <div class="hdr-right">
     <span class="entry-count" id="countEl">—</span>
+
     <a class="badge badge-lb" id="badgeLB"
        href="https://letterboxd.com/a__tharun/diary/"
        target="_blank" rel="noopener">
       <span class="bdot" id="dotLB"></span>
-      <span>Letterboxd</span>
+      <span class="badge-label">Letterboxd</span>
     </a>
+
     <a class="badge badge-sz" id="badgeSZ"
        href="https://www.serializd.com/user/tharun123/diary"
        target="_blank" rel="noopener">
       <span class="bdot" id="dotSZ"></span>
-      <span>Serializd</span>
+      <span class="badge-label">Serializd</span>
     </a>
   </div>
 </header>
 
 <!-- MAIN -->
 <main id="main">
-
-  <!-- mobile scroll hint (hidden on desktop via CSS) -->
-  <div class="scroll-hint" id="scrollHint">
-    <span>Scroll for more</span>
-    <span class="scroll-hint-arrow">
-      ── ── ──&nbsp;›
-    </span>
-  </div>
-
-  <!-- scrollable table wrapper -->
-  <div class="table-wrap" id="tableWrap">
+  <div class="table-wrap">
     <div class="col-head">
       <span class="ch">Date</span>
       <span class="ch">Type</span>
       <span class="ch">Title</span>
-      <span class="ch"></span><!-- rewatch column — no label -->
       <span class="ch">Released</span>
       <span class="ch r">Rating</span>
     </div>
@@ -461,7 +479,7 @@ main.vis{opacity:1}
 const $ = id => document.getElementById(id);
 const pad = n => String(n).padStart(2,'0');
 
-/* ── date helpers ── */
+/* ── date ── */
 function fmtDate(s){
   if(!s) return '—';
   const parts = s.split('-').map(Number);
@@ -533,6 +551,27 @@ function badgeErr(id){
   $('dot'+id)?.classList.add('dead');
 }
 
+/* ── touch tap for rewatch tooltip on mobile ── */
+function bindRewatchTaps(){
+  document.querySelectorAll('.rewatch-icon').forEach(el=>{
+    el.addEventListener('touchstart', e=>{
+      e.preventDefault();
+      const active = el.classList.contains('tapped');
+      /* close all others */
+      document.querySelectorAll('.rewatch-icon.tapped')
+              .forEach(o=>o.classList.remove('tapped'));
+      if(!active) el.classList.add('tapped');
+    },{passive:false});
+  });
+  /* tap elsewhere to close */
+  document.addEventListener('touchstart', e=>{
+    if(!e.target.closest('.rewatch-icon')){
+      document.querySelectorAll('.rewatch-icon.tapped')
+              .forEach(o=>o.classList.remove('tapped'));
+    }
+  },{passive:true});
+}
+
 /* ── render ── */
 function renderEntries(entries){
   const container=$('diary');
@@ -542,26 +581,27 @@ function renderEntries(entries){
       <div class="msg-box">
         <div class="msg-ico">📭</div>
         <div class="msg-title">No entries found</div>
-        <div class="msg-body">Check your Letterboxd &amp; Serializd profiles.</div>
+        <div class="msg-body">
+          Check your Letterboxd &amp; Serializd profiles.
+        </div>
       </div>`;
     return;
   }
 
-  /* group by month */
-  const groups=new Map();
-  const ordKeys=[];
+  const groups  = new Map();
+  const ordKeys = [];
   for(const e of entries){
-    const mk=monthKey(e.watched_date);
+    const mk = monthKey(e.watched_date);
     if(!groups.has(mk)){groups.set(mk,[]);ordKeys.push(mk);}
     groups.get(mk).push(e);
   }
 
-  let html='';
-  let idx=0;
+  let html = '';
+  let idx  = 0;
 
   for(const mk of ordKeys){
-    const grp=groups.get(mk);
-    html+=`
+    const grp = groups.get(mk);
+    html += `
       <div class="month-sep">
         <span class="ms-label">${mk}</span>
         <span class="ms-line"></span>
@@ -569,100 +609,85 @@ function renderEntries(entries){
       </div>`;
 
     for(const e of grp){
-      const delay   = Math.min(idx*14,320);
-      const stars   = toStars(e.rating);
-      const isTV    = e.type === 'tv';
-      const isRew   = !!e.rewatch;
+      const delay  = Math.min(idx * 14, 320);
+      const stars  = toStars(e.rating);
+      const isTV   = e.type === 'tv';
+      const isRew  = !!e.rewatch;
 
-      /* rewatch cell — only for films, only when flagged */
-      const rewCell = isRew
-        ? `<div class="r-rewatch-cell">
-             <span class="rewatch-icon" title="Rewatch">↺</span>
-           </div>`
-        : `<div class="r-rewatch-cell"></div>`;
+      const rewIcon = isRew
+        ? `<span class="rewatch-icon" role="img" aria-label="Rewatched">↺</span>`
+        : '';
 
-      html+=`
+      html += `
         <div class="row" style="animation-delay:${delay}ms">
+
           <div class="r-date">${fmtDate(e.watched_date)}</div>
 
           <div class="r-type-cell">
-            <span class="r-type ${isTV?'t-tv':'t-film'}">
-              ${isTV?'TV':'Film'}
+            <span class="r-type ${isTV ? 't-tv' : 't-film'}">
+              ${isTV ? 'TV' : 'Film'}
             </span>
           </div>
 
           <div class="r-title-wrap">
             <div class="r-title" title="${esc(e.title)}">${esc(e.title)}</div>
+            ${rewIcon}
           </div>
 
-          ${rewCell}
-
-          <div class="r-year">${esc(e.year||'—')}</div>
+          <div class="r-year">${esc(e.year || '—')}</div>
 
           <div class="r-rating">
             ${stars
-              ?`<span class="stars" title="${e.rating}/5">${stars}</span>`
-              :`<span class="no-rating">—</span>`}
+              ? `<span class="stars" title="${e.rating}/5">${stars}</span>`
+              : `<span class="no-rating">—</span>`}
           </div>
+
         </div>`;
 
       idx++;
     }
   }
 
-  container.innerHTML=html;
-
-  /* hide scroll hint once user has scrolled the table */
-  const wrap=$('tableWrap');
-  const hint=$('scrollHint');
-  if(wrap && hint){
-    wrap.addEventListener('scroll',()=>{
-      if(wrap.scrollLeft > 20){
-        hint.style.opacity='0';
-        hint.style.transition='opacity 0.4s';
-      } else {
-        hint.style.opacity='1';
-      }
-    },{passive:true});
-  }
+  container.innerHTML = html;
+  bindRewatchTaps();
 }
 
 /* ── poll ── */
-let _poll=null;
-let _lastCount=0;
+let _poll = null;
+let _lastCount = 0;
 
 function startPoll(){
-  if(_poll)return;
-  _poll=setInterval(async()=>{
+  if(_poll) return;
+  _poll = setInterval(async()=>{
     try{
-      const r=await fetch('/api/status');
-      const sd=await r.json();
+      const r  = await fetch('/api/status');
+      const sd = await r.json();
       if(!sd.refreshing){
-        clearInterval(_poll);_poll=null;
-        const newTotal=(sd.lb_count||0)+(sd.sz_count||0);
-        if(newTotal!==_lastCount){
+        clearInterval(_poll); _poll = null;
+        const newTotal = (sd.lb_count||0) + (sd.sz_count||0);
+        if(newTotal !== _lastCount){
           showToast('New entries — reloading…');
-          setTimeout(()=>location.reload(),1000);
+          setTimeout(()=>location.reload(), 1000);
         } else {
-          showToast('Up to date ✓',2500);
+          showToast('Up to date ✓', 2500);
         }
       }
-    }catch{
-      clearInterval(_poll);_poll=null;
+    } catch {
+      clearInterval(_poll); _poll = null;
     }
-  },3000);
+  }, 3000);
 }
 
 /* ── init ── */
 async function init(){
-  const [,apiRes]=await Promise.allSettled([
+  const [, apiRes] = await Promise.allSettled([
     runIntro(),
-    fetch('/api/diary').then(r=>r.json()),
+    fetch('/api/diary').then(r => r.json()),
   ]);
 
-  if(apiRes.status==='rejected'){
-    badgeErr('LB');badgeErr('SZ');
-    $('diary').innerHTML=`
+  if(apiRes.status === 'rejected'){
+    badgeErr('LB'); badgeErr('SZ');
+    $('diary').innerHTML = `
       <div class="msg-box">
         <div class="msg-ico">⚠️</div>
         <div class="msg-title">Server not running</div>
@@ -674,16 +699,16 @@ async function init(){
     return;
   }
 
-  const data=apiRes.value;
-  const entries=data.entries||[];
-  _lastCount=data.count||0;
+  const data    = apiRes.value;
+  const entries = data.entries || [];
+  _lastCount    = data.count   || 0;
 
-  (data.lb_count>0)?badgeOK('LB'):badgeErr('LB');
-  (data.sz_count>0)?badgeOK('SZ'):badgeErr('SZ');
+  (data.lb_count > 0) ? badgeOK('LB') : badgeErr('LB');
+  (data.sz_count > 0) ? badgeOK('SZ') : badgeErr('SZ');
 
-  const lb=data.lb_count||0;
-  const sz=data.sz_count||0;
-  $('countEl').textContent=`${lb+sz} entries`;
+  const lb = data.lb_count || 0;
+  const sz = data.sz_count || 0;
+  $('countEl').textContent = `${lb + sz} entries`;
 
   renderEntries(entries);
 
