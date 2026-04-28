@@ -93,6 +93,11 @@ def parse_rss(xml_text):
         member_rating = ns_text(item, 'memberRating')
         watched_date  = ns_text(item, 'watchedDate')
 
+        # ── rewatch flag ──────────────────────────────────────────────
+        rewatch_raw = ns_text(item, 'rewatch')
+        is_rewatch  = rewatch_raw.lower() == 'yes'
+        # ─────────────────────────────────────────────────────────────
+
         if not film_title:
             raw = (item.findtext('title') or '').strip()
             raw = re.sub(
@@ -124,6 +129,7 @@ def parse_rss(xml_text):
             'year':         film_year,
             'rating':       rating,
             'watched_date': date_str,
+            'rewatch':      is_rewatch,          # ← NEW
             'type':         'film',
             'source':       'letterboxd',
         })
