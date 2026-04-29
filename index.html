@@ -1,39 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tharun's Diary</title>
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,500;1,700&display=swap');
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
-  --bg:        #0d0d0d;
-  --bg2:       #111;
-  --bg3:       #161616;
-  --bg4:       #1c1c1c;
-  --border:    rgba(255,255,255,0.06);
-  --border2:   rgba(255,255,255,0.12);
-  --text-1:    #ebebeb;
-  --text-2:    #909090;
-  --text-3:    #505050;
-  --accent:    #c8a96e;
-  --star:      #f5c518;
-  --green:     #4ade80;
-  --blue:      #60a5fa;
-  --red:       #f87171;
-  --hover:     rgba(255,255,255,0.03);
-  --hdr:       62px;
-
-  --pill-bg:   rgba(255,255,255,0.06);
-  --pill-bd:   rgba(255,255,255,0.10);
-
+  --bg:      #0d0d0d;
+  --bg2:     #111;
+  --bg3:     #161616;
+  --bg4:     #1c1c1c;
+  --border:  rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.12);
+  --text-1:  #ebebeb;
+  --text-2:  #909090;
+  --text-3:  #505050;
+  --accent:  #c8a96e;
+  --star:    #f5c518;
+  --green:   #4ade80;
+  --blue:    #60a5fa;
+  --red:     #f87171;
+  
+  /* Pill Colors */
+  --pill-bg:     rgba(255,255,255,0.06);
+  --pill-bd:     rgba(255,255,255,0.10);
   --pill-rew-bg: rgba(167,139,250,0.12);
   --pill-rew-bd: rgba(167,139,250,0.25);
   --pill-rew-tx: #c4b5fd;
+  
+  --hover:   rgba(255,255,255,0.03);
+  --hdr:     62px;
 }
 
 html{scroll-behavior:smooth}
@@ -49,7 +49,9 @@ body{
   overflow-x:hidden;
 }
 
-/* ───────────────────────── INTRO ───────────────────────── */
+/* ═══════════════════════════════════
+   INTRO
+═══════════════════════════════════ */
 #intro{
   position:fixed;inset:0;z-index:1000;
   background:var(--bg);
@@ -70,7 +72,9 @@ body{
 #intro.fade-out{animation:iFade 0.55s ease forwards}
 @keyframes iFade{to{opacity:0}}
 
-/* ───────────────────────── HEADER ───────────────────────── */
+/* ═══════════════════════════════════
+   HEADER
+═══════════════════════════════════ */
 header{
   position:sticky;top:0;z-index:100;
   height:var(--hdr);
@@ -91,27 +95,20 @@ header.vis{opacity:1}
   font-family:'Playfair Display',Georgia,serif;
   font-style:italic;font-weight:700;
   font-size:clamp(18px,2.6vw,28px);
-  color:var(--text-1);
-  letter-spacing:-0.5px;
-  user-select:none;
-  line-height:1;
-  white-space:nowrap;
+  color:var(--text-1);letter-spacing:-0.5px;
+  user-select:none;line-height:1;white-space:nowrap;
   flex-shrink:0;
 }
 .logo em{color:var(--accent)}
 
 .hdr-right{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-shrink:0;
+  display:flex;align-items:center;
+  gap:8px;flex-shrink:0;
 }
 
 .entry-count{
-  font-size:12px;
-  font-weight:500;
-  color:var(--text-2);
-  white-space:nowrap;
+  font-size:12px;font-weight:500;
+  color:var(--text-2);white-space:nowrap;
   margin-right:4px;
 }
 
@@ -121,13 +118,12 @@ header.vis{opacity:1}
   padding:5px 12px 5px 9px;
   border-radius:24px;border:1px solid;
   text-decoration:none;white-space:nowrap;
-  transition:filter 0.2s,transform 0.18s;
-  line-height:1;
+  transition:filter 0.2s,transform 0.18s;line-height:1;
 }
 .badge:hover{filter:brightness(1.3);transform:translateY(-1px)}
 .badge-lb{color:var(--green);border-color:rgba(74,222,128,0.28);background:rgba(74,222,128,0.07)}
-.badge-sz{color:var(--blue); border-color:rgba(96,165,250,0.28); background:rgba(96,165,250,0.07)}
-.badge-err{color:var(--red); border-color:rgba(248,113,113,0.28); background:rgba(248,113,113,0.07)}
+.badge-sz{color:var(--blue);border-color:rgba(96,165,250,0.28);background:rgba(96,165,250,0.07)}
+.badge-err{color:var(--red);border-color:rgba(248,113,113,0.28);background:rgba(248,113,113,0.07)}
 
 .bdot{
   width:7px;height:7px;border-radius:50%;
@@ -135,52 +131,51 @@ header.vis{opacity:1}
   animation:pulse 2.2s ease infinite;
 }
 .bdot.dead{animation:none;opacity:0.3}
+.badge-label{font-size:12px}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}
 
-/* ───────────────────────── MAIN ───────────────────────── */
+/* ═══════════════════════════════════
+   MAIN & TABLE WRAPPER
+═══════════════════════════════════ */
 main{
-  max-width:1100px;
-  margin:0 auto;
+  max-width:1100px;margin:0 auto;
   padding:0 clamp(12px,4vw,48px) 80px;
-  opacity:0;
-  transition:opacity 0.5s ease 0.1s;
+  opacity:0;transition:opacity 0.5s ease 0.1s;
 }
 main.vis{opacity:1}
 
-/* ───────────────────────── TABLE WRAP ─────────────────────────
-   Desktop: no horizontal scroll.
-   Mobile: horizontal scroll (requested).
-────────────────────────────────────────────────────────────── */
 .table-wrap{
   width:100%;
-  overflow:visible;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color:var(--border2) transparent;
 }
+.table-wrap::-webkit-scrollbar{height:4px}
+.table-wrap::-webkit-scrollbar-track{background:transparent}
+.table-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 
-/* Column headers and rows share these */
-.col-head,
-.row{
+/* ── Grid setup for columns ── */
+.col-head, .row {
   display:grid;
-  grid-template-columns: 112px 56px minmax(260px,1fr) 110px 120px;
+  grid-template-columns: 100px 56px 1fr 90px 110px;
   align-items:center;
   gap:12px;
 }
 
-/* header row */
+/* ── column header ── */
 .col-head{
   padding:22px 16px 10px;
   border-bottom:1px solid var(--border2);
   margin-top:26px;
 }
 .ch{
-  font-size:10px;
-  font-weight:700;
-  letter-spacing:1.6px;
-  text-transform:uppercase;
-  color:var(--text-3);
+  font-size:10px;font-weight:700;
+  letter-spacing:1.6px;text-transform:uppercase;color:var(--text-3);
 }
 .ch.r{text-align:right}
 
-/* month separator */
+/* ── month separator ── */
 .month-sep{
   display:flex;align-items:center;gap:12px;
   padding:24px 16px 8px;
@@ -192,99 +187,91 @@ main.vis{opacity:1}
 .ms-line{flex:1;height:1px;background:var(--border)}
 .ms-count{font-size:15px;color:var(--text-3);white-space:nowrap}
 
-/* row */
+/* ── diary row ── */
 .row{
   min-height:56px;
-  padding:10px 16px;
+  padding:12px 16px;
   border-bottom:1px solid var(--border);
   transition:background 0.14s;
-  gap:12px;
+  animation:rowIn 0.32s ease both;
 }
 .row:hover{background:var(--hover)}
+@keyframes rowIn{
+  from{opacity:0;transform:translateY(5px)}
+  to  {opacity:1;transform:translateY(0)}
+}
 
-/* date */
+/* ── Date ── */
 .r-date{
-  font-size:13px;
-  color:var(--text-2);
+  font-size:13px;color:var(--text-2);
   font-variant-numeric:tabular-nums;
   white-space:nowrap;
 }
 
-/* type badge cell */
+/* ── Type Pill ── */
 .r-type-cell{display:flex;align-items:center}
 .type-pill{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:0.9px;
-  text-transform:uppercase;
-  padding:3px 9px;
-  border-radius:6px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:800;letter-spacing:0.8px;
+  text-transform:uppercase;padding:3px 7px;border-radius:4px;
   border:1px solid var(--pill-bd);
   background:var(--pill-bg);
   white-space:nowrap;
 }
-.type-film{ color:var(--green); border-color:rgba(74,222,128,0.20); background:rgba(74,222,128,0.08) }
-.type-tv  { color:var(--blue);  border-color:rgba(96,165,250,0.20);  background:rgba(96,165,250,0.08) }
+.type-film{color:var(--green);border-color:rgba(74,222,128,0.20);background:rgba(74,222,128,0.08)}
+.type-tv  {color:var(--blue); border-color:rgba(96,165,250,0.20);background:rgba(96,165,250,0.08)}
 
-/* title cell */
+/* ── Title Cell & Rewatch Pill ── */
 .r-title-wrap{
-  min-width:0;
   display:flex;
-  align-items:center;
-  gap:10px;                 /* requested 10px gap */
-}
-.r-title{
+  align-items:center; /* Centers title and pill vertically */
+  gap:10px;           /* EXACT 10px GAP */
   min-width:0;
-  flex:1 1 auto;
-  font-size:14px;
-  font-weight:600;
+}
+
+.r-title{
+  font-size:14.5px;
+  font-weight:500;
   color:var(--text-1);
-  /* Desktop: one line, ellipsis */
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  letter-spacing:-0.1px;
-  line-height:1.25;
+  line-height:1.4;
+  /* Allow the title to fully wrap so it's entirely visible */
+  white-space:normal; 
+  word-break:break-word;
 }
 
-/* rewatch label (only when true) */
 .rewatch-pill{
-  flex:0 0 auto;
-  font-size:10px;
+  flex:0 0 auto; /* Ensures the pill NEVER shrinks */
+  font-size:9px;
   font-weight:800;
-  letter-spacing:0.9px;
+  letter-spacing:0.8px;
   text-transform:uppercase;
-  padding:3px 8px;
-  border-radius:999px;
-  border:1px solid var(--pill-rew-bd);
-  background:var(--pill-rew-bg);
+  padding:3px 7px;
+  border-radius:4px;
+  white-space:nowrap;
   color:var(--pill-rew-tx);
-  white-space:nowrap;
+  background:var(--pill-rew-bg);
+  border:1px solid var(--pill-rew-bd);
 }
 
-/* released */
+/* ── Released ── */
 .r-year{
-  font-size:13px;
-  color:var(--text-3);
-  white-space:nowrap;
+  font-size:13px;color:var(--text-3);
+  font-variant-numeric:tabular-nums;white-space:nowrap;
 }
 
-/* rating */
+/* ── Rating ── */
 .r-rating{text-align:right;white-space:nowrap}
 .stars{font-size:14px;color:var(--star);letter-spacing:1.4px}
 .no-rating{font-size:12px;color:var(--text-3)}
 
-/* states */
+/* ═══════════════════════════════════
+   STATES & TOAST
+═══════════════════════════════════ */
 .loading{padding:110px 0;text-align:center}
 .spin-lg{
   width:28px;height:28px;
-  border:2px solid var(--border2);
-  border-top-color:var(--accent);
-  border-radius:50%;
-  animation:spin 0.75s linear infinite;
+  border:2px solid var(--border2);border-top-color:var(--accent);
+  border-radius:50%;animation:spin 0.75s linear infinite;
   margin:0 auto 16px;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -293,35 +280,23 @@ main.vis{opacity:1}
 
 .msg-box{
   margin:90px auto;max-width:380px;
-  background:var(--bg3);
-  border:1px solid var(--border2);
-  border-radius:12px;
-  padding:48px 32px;
-  text-align:center;
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:12px;padding:48px 32px;text-align:center;
 }
 .msg-ico{font-size:28px;margin-bottom:14px}
 .msg-title{font-size:17px;font-weight:600;margin-bottom:8px}
 .msg-body{font-size:13px;color:var(--text-2);line-height:1.9}
+.msg-body code{background:var(--bg4);padding:2px 6px;border-radius:3px;font-size:12px}
 
-/* toast */
 .toast{
-  position:fixed;
-  bottom:22px;right:22px;
-  background:#1a1a1a;
-  border:1px solid var(--border2);
-  border-radius:8px;
-  padding:10px 16px;
-  font-size:13px;
-  color:var(--text-2);
-  display:flex;
-  align-items:center;
-  gap:9px;
-  opacity:0;
-  transform:translateY(6px);
+  position:fixed;bottom:22px;right:22px;
+  background:#1a1a1a;border:1px solid var(--border2);
+  border-radius:8px;padding:10px 16px;
+  font-size:13px;color:var(--text-2);
+  display:flex;align-items:center;gap:9px;
+  opacity:0;transform:translateY(6px);
   transition:opacity 0.3s,transform 0.3s;
-  pointer-events:none;
-  z-index:500;
-  max-width:260px;
+  pointer-events:none;z-index:500;max-width:260px;
 }
 .toast.show{opacity:1;transform:translateY(0)}
 .t-dot{
@@ -330,11 +305,9 @@ main.vis{opacity:1}
   animation:pulse 1.5s ease infinite;
 }
 
-/* ───────────────────────── MOBILE FIXES ─────────────────────────
-   - Keep watched date visible
-   - Make titles readable: allow 2 lines (no ellipsis)
-   - Enable horizontal scroll for Released + Rating
-────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════
+   RESPONSIVE (MOBILE)
+═══════════════════════════════════ */
 @media(max-width:640px){
   header{height:54px;padding:0 12px}
   .logo{font-size:17px}
@@ -344,46 +317,38 @@ main.vis{opacity:1}
 
   main{padding:0 0 60px}
 
-  /* MOBILE SCROLL is back */
-  .table-wrap{
-    overflow-x:auto;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:thin;
-    scrollbar-color:var(--border2) transparent;
+  /* Force min-width to enable horizontal scrolling & give titles room */
+  .col-head, .row {
+    min-width: 650px !important; 
+    grid-template-columns: 85px 50px 1fr 70px 85px; 
+    gap: 12px;
   }
-  .table-wrap::-webkit-scrollbar{height:3px}
-  .table-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+  
+  .col-head{padding:18px 12px 8px; margin-top:16px;}
+  .month-sep{min-width: 650px; padding-left:12px; padding-right:12px;}
+  .row{min-height:50px; padding:10px 12px;}
 
-  /* make grid wider so scroll exists and title has room */
-  .col-head,
-  .row{
-    min-width:760px; /* forces horizontal scroll and prevents title squeeze */
-  }
+  /* Font tweaks for mobile */
+  .r-date {font-size:12px}
+  .r-title{font-size:14px} /* Title will wrap naturally, no dots! */
+  .r-year {font-size:12px}
+  .stars  {font-size:13px}
 
-  /* titles: show up to 2 lines on mobile */
-  .r-title{
-    white-space:normal;
-    overflow:visible;
-    text-overflow:clip;
-    display:-webkit-box;
-    -webkit-line-clamp:2;
-    -webkit-box-orient:vertical;
-  }
+  .toast{bottom:12px;right:12px;left:12px;max-width:none}
+}
 
-  /* slightly tighter */
-  .row{min-height:52px;padding:10px 12px}
-  .col-head{padding:18px 12px 8px;margin-top:18px}
-  .month-sep{padding-left:12px;padding-right:12px}
-  .r-date{font-size:12px}
-  .r-year{font-size:12px}
-  .stars{font-size:13px}
-
-  .toast{bottom:12px;left:12px;right:12px;max-width:none}
+/* Tablet / Desktop Grid tweaks */
+@media(min-width:900px){
+  .col-head, .row { grid-template-columns:110px 60px 1fr 110px 120px; }
+}
+@media(min-width:1200px){
+  .col-head, .row { grid-template-columns:130px 60px 1fr 130px 140px; }
+  .r-title{font-size:15.5px}
 }
 </style>
 </head>
-
 <body>
+
 <!-- INTRO -->
 <div id="intro">
   <div class="intro-text">Tharun's&nbsp;<em>Diary</em></div>
@@ -398,31 +363,28 @@ main.vis{opacity:1}
 <!-- HEADER -->
 <header id="hdr">
   <div class="logo">Tharun's&nbsp;<em>Diary</em></div>
-
   <div class="hdr-right">
     <span class="entry-count" id="countEl">—</span>
-
     <a class="badge badge-lb" id="badgeLB"
        href="https://letterboxd.com/a__tharun/diary/"
        target="_blank" rel="noopener">
       <span class="bdot" id="dotLB"></span>
-      <span>Letterboxd</span>
+      <span class="badge-label">Letterboxd</span>
     </a>
-
     <a class="badge badge-sz" id="badgeSZ"
        href="https://www.serializd.com/user/tharun123/diary"
        target="_blank" rel="noopener">
       <span class="bdot" id="dotSZ"></span>
-      <span>Serializd</span>
+      <span class="badge-label">Serializd</span>
     </a>
   </div>
 </header>
 
 <!-- MAIN -->
 <main id="main">
-  <div class="table-wrap" id="wrap">
-    <div class="col-head">
-      <span class="ch">Date</span>
+  <div class="table-wrap">
+    <div class="col-head" id="colHead">
+      <span class="ch ch-date">Date</span>
       <span class="ch">Type</span>
       <span class="ch">Title</span>
       <span class="ch">Released</span>
@@ -561,7 +523,7 @@ function renderEntries(entries){
 
           <div class="r-title-wrap">
             <div class="r-title" title="${esc(e.title)}">${esc(e.title)}</div>
-            ${isRew ? `<span class="rewatch-pill" title="Rewatched">Rewatch</span>` : ``}
+            ${isRew ? `<span class="rewatch-pill">REWATCH</span>` : ``}
           </div>
 
           <div class="r-year">${esc(e.year || '—')}</div>
@@ -579,7 +541,6 @@ function renderEntries(entries){
   container.innerHTML = html;
 }
 
-/* poll */
 let _poll=null, _lastCount=0;
 
 function startPoll(){
@@ -631,9 +592,7 @@ async function init(){
   (data.lb_count > 0) ? badgeOK('LB') : badgeErr('LB');
   (data.sz_count > 0) ? badgeOK('SZ') : badgeErr('SZ');
 
-  const lb = data.lb_count || 0;
-  const sz = data.sz_count || 0;
-  $('countEl').textContent = `${lb + sz} entries`;
+  $('countEl').textContent = `${(data.lb_count||0)+(data.sz_count||0)} entries`;
 
   renderEntries(entries);
 
