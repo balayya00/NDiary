@@ -24,6 +24,7 @@
   --green:   #4ade80;
   --blue:    #60a5fa;
   --red:     #f87171;
+  --purple:  #a78bfa;
   --hover:   rgba(255,255,255,0.03);
   --hdr:     62px;
 }
@@ -113,21 +114,10 @@ header.vis{opacity:1}
   transition:filter 0.2s,transform 0.18s;line-height:1;
 }
 .badge:hover{filter:brightness(1.3);transform:translateY(-1px)}
-.badge-lb{
-  color:var(--green);
-  border-color:rgba(74,222,128,0.28);
-  background:rgba(74,222,128,0.07);
-}
-.badge-sz{
-  color:var(--blue);
-  border-color:rgba(96,165,250,0.28);
-  background:rgba(96,165,250,0.07);
-}
-.badge-err{
-  color:var(--red);
-  border-color:rgba(248,113,113,0.28);
-  background:rgba(248,113,113,0.07);
-}
+.badge-lb{color:var(--green);border-color:rgba(74,222,128,0.28);background:rgba(74,222,128,0.07)}
+.badge-sz{color:var(--blue);border-color:rgba(96,165,250,0.28);background:rgba(96,165,250,0.07)}
+.badge-err{color:var(--red);border-color:rgba(248,113,113,0.28);background:rgba(248,113,113,0.07)}
+
 .bdot{
   width:7px;height:7px;border-radius:50%;
   background:currentColor;flex-shrink:0;
@@ -135,6 +125,7 @@ header.vis{opacity:1}
 }
 .bdot.dead{animation:none;opacity:0.3}
 .badge-label{font-size:12px}
+
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}
 
 /* ═══════════════════════════════════
@@ -148,9 +139,22 @@ main{
 main.vis{opacity:1}
 
 /* ═══════════════════════════════════
-   DESKTOP LAYOUT  ≥ 600px
-   DATE | TYPE | TITLE | RELEASED | RATING
+   TABLE - Scrollable container
 ═══════════════════════════════════ */
+.table-wrap{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scrollbar-color:var(--border2) transparent;
+}
+.table-wrap::-webkit-scrollbar{height:3px}
+.table-wrap::-webkit-scrollbar-track{background:transparent}
+.table-wrap::-webkit-scrollbar-thumb{
+  background:var(--border2);border-radius:2px;
+}
+
+/* ── grid columns ── */
 .col-head,
 .row{
   display:grid;
@@ -158,9 +162,11 @@ main.vis{opacity:1}
   gap:12px;
 }
 
-/* desktop grid */
-.col-head{ grid-template-columns:110px 52px 1fr 110px 120px; }
-.row      { grid-template-columns:110px 52px 1fr 110px 120px; }
+/* desktop default grid */
+.col-head, .row {
+  grid-template-columns:110px 52px 1fr 100px 115px;
+  min-width: 600px; /* Ensures it never squishes too far */
+}
 
 /* ── column header ── */
 .col-head{
@@ -178,6 +184,7 @@ main.vis{opacity:1}
 .month-sep{
   display:flex;align-items:center;gap:12px;
   padding:24px 16px 8px;
+  min-width: 600px; /* Matches grid min-width */
 }
 .ms-label{
   font-size:20px;font-weight:700;letter-spacing:2px;
@@ -200,14 +207,14 @@ main.vis{opacity:1}
   to  {opacity:1;transform:translateY(0)}
 }
 
-/* ── date ── */
+/* date */
 .r-date{
   font-size:13px;color:var(--text-2);
   font-variant-numeric:tabular-nums;
   letter-spacing:0.2px;white-space:nowrap;
 }
 
-/* ── type ── */
+/* type */
 .r-type-cell{display:flex;align-items:center}
 .r-type{
   display:inline-flex;align-items:center;justify-content:center;
@@ -218,71 +225,56 @@ main.vis{opacity:1}
 .t-film{color:var(--green);background:rgba(74,222,128,0.1)}
 .t-tv  {color:var(--blue); background:rgba(96,165,250,0.1)}
 
-/* ── title cell ── */
+/* ── title cell & REWATCH badge ── */
 .r-title-wrap{
   min-width:0;
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:10px; /* Perfect 10px gap between title and badge */
 }
+
 .r-title{
-  font-size:14px;font-weight:500;color:var(--text-1);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  letter-spacing:-0.1px;line-height:1.3;
-  flex:1 1 0;min-width:0;
-}
-
-/* ── REWATCH ICON — no spin ── */
-.rewatch-icon{
-  flex:0 0 auto;
-  font-size:16px;line-height:1;
-  color:#a78bfa;
-  cursor:default;
-  position:relative;
-  display:inline-flex;
-  align-items:center;justify-content:center;
-  user-select:none;
-}
-/* tooltip */
-.rewatch-icon::after{
-  content:'Rewatched';
-  position:absolute;
-  bottom:calc(100% + 7px);
-  left:50%;
-  transform:translateX(-50%) translateY(4px);
-  background:#1e1e2e;
-  color:#a78bfa;
-  font-size:11px;font-weight:600;
-  font-family:'Inter',system-ui,sans-serif;
-  letter-spacing:0.3px;
-  padding:4px 10px;
-  border-radius:6px;
-  border:1px solid rgba(167,139,250,0.3);
+  font-size:14.5px;
+  font-weight:500;
+  color:var(--text-1);
   white-space:nowrap;
-  pointer-events:none;
-  opacity:0;
-  transition:opacity 0.18s ease,transform 0.18s ease;
-  z-index:20;
-}
-.rewatch-icon:hover::after,
-.rewatch-icon.tapped::after{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  letter-spacing:-0.1px;
+  line-height:1.3;
+  flex: 0 1 auto; /* Allows shrinking with ellipsis if needed */
 }
 
-/* ── year ── */
+/* The new REWATCH label */
+.r-rewatch{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.8px;
+  text-transform:uppercase;
+  padding:2px 6px;
+  border-radius:4px;
+  white-space:nowrap;
+  color:var(--purple);
+  background:rgba(167, 139, 250, 0.1);
+  flex: 0 0 auto; /* Never shrink or squish the badge */
+}
+
+/* year */
 .r-year{
   font-size:13px;color:var(--text-3);
   font-variant-numeric:tabular-nums;white-space:nowrap;
 }
 
-/* ── rating ── */
+/* rating */
 .r-rating{text-align:right;white-space:nowrap}
 .stars{font-size:14px;color:var(--star);letter-spacing:1.5px}
 .no-rating{font-size:12px;color:var(--text-3)}
 
 /* ═══════════════════════════════════
-   STATES
+   STATES & TOAST
 ═══════════════════════════════════ */
 .loading{padding:110px 0;text-align:center}
 .spin-lg{
@@ -308,9 +300,6 @@ main.vis{opacity:1}
   border-radius:3px;font-size:12px;
 }
 
-/* ═══════════════════════════════════
-   TOAST
-═══════════════════════════════════ */
 .toast{
   position:fixed;bottom:22px;right:22px;
   background:#1a1a1a;border:1px solid var(--border2);
@@ -332,13 +321,8 @@ main.vis{opacity:1}
    RESPONSIVE
 ═══════════════════════════════════ */
 
-/* ── MOBILE  < 600px ──
-   Hide: DATE column
-   Grid: TYPE | TITLE | RELEASED | RATING
-   Title gets maximum space → full names visible
-── */
+/* ── MOBILE  < 600px ── */
 @media(max-width:599px){
-
   header{
     padding:0 12px;
     height:54px;
@@ -355,29 +339,25 @@ main.vis{opacity:1}
   main{padding:0 0 60px}
   .month-sep{padding-left:12px;padding-right:12px}
 
-  /* 4-col mobile grid — no date */
-  .col-head{
-    grid-template-columns:44px 1fr 72px 80px !important;
-    padding:16px 12px 8px;
-    margin-top:16px;
+  /*
+    MOBILE GRID: By setting min-width: 550px, we force the table to scroll
+    horizontally instead of squishing everything.
+    Date is visible, and title gets a massive 1fr area.
+  */
+  .col-head, .row {
+    grid-template-columns: 80px 48px 1fr 75px 85px !important;
+    min-width: 550px !important;
+    gap: 10px;
   }
-  .row{
-    grid-template-columns:44px 1fr 72px 80px !important;
-    min-height:46px;
-    padding:8px 12px;
-    gap:8px;
-  }
+  .row{min-height:48px;padding:8px 12px}
+  .col-head{padding:18px 12px 8px; margin-top:16px;}
+  .month-sep{min-width: 550px;}
 
-  /* hide date cell completely */
-  .r-date{ display:none }
-  /* hide date header */
-  .ch-date{ display:none }
-
-  /* title bigger on mobile since it has room now */
+  .r-date {font-size:12px}
   .r-title{font-size:14px}
   .r-year {font-size:12px}
   .stars  {font-size:13px}
-  .rewatch-icon{font-size:15px}
+  .r-type, .r-rewatch { font-size:9px; padding:2px 5px; }
 
   .toast{
     bottom:12px;right:12px;left:12px;max-width:none;
@@ -386,16 +366,15 @@ main.vis{opacity:1}
 
 /* ── TABLET  600–899px ── */
 @media(min-width:600px) and (max-width:899px){
-  .col-head{ grid-template-columns:100px 50px 1fr 100px 110px }
-  .row      { grid-template-columns:100px 50px 1fr 100px 110px }
+  .col-head, .row{ grid-template-columns:90px 50px 1fr 90px 110px }
   .entry-count{font-size:12px}
   .badge{font-size:12px}
 }
 
 /* ── DESKTOP  ≥ 900px ── */
 @media(min-width:900px){
-  .col-head{ grid-template-columns:120px 56px 1fr 120px 130px }
-  .row      { grid-template-columns:120px 56px 1fr 120px 130px }
+  .table-wrap{overflow:visible}
+  .col-head, .row{ grid-template-columns:120px 56px 1fr 120px 130px; gap:12px; }
   .r-title{font-size:15px}
   .r-date,.r-year{font-size:14px}
   .row{min-height:58px;padding:10px 16px}
@@ -403,14 +382,12 @@ main.vis{opacity:1}
 
 /* ── LARGE  ≥ 1200px ── */
 @media(min-width:1200px){
-  .col-head{ grid-template-columns:130px 60px 1fr 130px 140px }
-  .row      { grid-template-columns:130px 60px 1fr 130px 140px }
+  .col-head, .row{ grid-template-columns:130px 60px 1fr 130px 140px }
   .r-title{font-size:16px}
   .r-date,.r-year{font-size:15px}
   .stars{font-size:15px}
   .badge{font-size:14px;padding:5px 15px 5px 11px}
   .entry-count{font-size:14px}
-  .rewatch-icon{font-size:17px}
 }
 </style>
 </head>
@@ -449,24 +426,23 @@ main.vis{opacity:1}
 
 <!-- MAIN -->
 <main id="main">
+  <div class="table-wrap">
+    <div class="col-head" id="colHead">
+      <span class="ch ch-date">Date</span>
+      <span class="ch">Type</span>
+      <span class="ch">Title</span>
+      <span class="ch">Released</span>
+      <span class="ch r">Rating</span>
+    </div>
 
-  <!-- DESKTOP column headers -->
-  <div class="col-head" id="colHead">
-    <span class="ch ch-date">Date</span>
-    <span class="ch">Type</span>
-    <span class="ch">Title</span>
-    <span class="ch">Released</span>
-    <span class="ch r">Rating</span>
-  </div>
-
-  <div id="diary">
-    <div class="loading">
-      <div class="spin-lg"></div>
-      <div class="load-txt">Loading diary…</div>
-      <div class="load-sub">Fetching entries</div>
+    <div id="diary">
+      <div class="loading">
+        <div class="spin-lg"></div>
+        <div class="load-txt">Loading diary…</div>
+        <div class="load-sub">Fetching entries</div>
+      </div>
     </div>
   </div>
-
 </main>
 
 <script>
@@ -541,24 +517,6 @@ function badgeErr(id){
   $('dot'+id)?.classList.add('dead');
 }
 
-function bindRewatchTaps(){
-  document.querySelectorAll('.rewatch-icon').forEach(el=>{
-    el.addEventListener('touchstart',e=>{
-      e.preventDefault();
-      const already = el.classList.contains('tapped');
-      document.querySelectorAll('.rewatch-icon.tapped')
-              .forEach(o=>o.classList.remove('tapped'));
-      if(!already) el.classList.add('tapped');
-    },{passive:false});
-  });
-  document.addEventListener('touchstart',e=>{
-    if(!e.target.closest('.rewatch-icon')){
-      document.querySelectorAll('.rewatch-icon.tapped')
-              .forEach(o=>o.classList.remove('tapped'));
-    }
-  },{passive:true});
-}
-
 function renderEntries(entries){
   const container = $('diary');
 
@@ -600,8 +558,9 @@ function renderEntries(entries){
       const isTV  = e.type === 'tv';
       const isRew = !!e.rewatch;
 
+      // REWATCH LABEL (Purple badge just like FILM/TV tags)
       const rewHtml = isRew
-        ? `<span class="rewatch-icon" role="img" aria-label="Rewatched">↺</span>`
+        ? `<span class="r-rewatch">REWATCH</span>`
         : '';
 
       html += `
@@ -634,7 +593,6 @@ function renderEntries(entries){
   }
 
   container.innerHTML = html;
-  bindRewatchTaps();
 }
 
 let _poll=null, _lastCount=0;
